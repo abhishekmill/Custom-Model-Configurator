@@ -1,5 +1,5 @@
 import { Canvas, useThree } from "@react-three/fiber";
-import { Environment, Grid, OrbitControls } from "@react-three/drei";
+import { Environment, GizmoHelper, GizmoViewport, Grid, OrbitControls, TransformControls } from "@react-three/drei";
 import { useState } from "react";
 import ModelUploader from "./ModelUploader";
 import Model from "./Model";
@@ -35,9 +35,18 @@ const Scene = () => {
 
 
 
-          {/* Render multiple uploaded models */}
+  <GizmoHelper alignment="top-right" margin={[80, 80]}>     
+    
+      <GizmoViewport
+              axisColors={["red", "green", "blue"]}
+              labelColor="white"
+            />   
+            </GizmoHelper>  
           {models.map((model, index) => (
+            <TransformControls>
+
             <Model key={index} modelFile={model} position={[index * 2, 0, 0]} />
+            </TransformControls>
           ))}
         </Canvas>
       </div>
