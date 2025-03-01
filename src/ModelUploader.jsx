@@ -1,30 +1,57 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
+import { useDropzone } from "react-dropzone";
 import React from "react";
 
-const ModelUploader = ({ onModelLoad }) => {
-  const [fileName, setFileName] = useState("");
+const ModelUploader = ({ onModelsLoad }) => {
+  const [files, setFiles] = useState([]);
 
-  const handleFileChange = (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      if (file.size > 50 * 1024 * 1024) {
-        // Max 50MB
-        alert("File size exceeds 50MB limit!");
+  const onDrop = useCallback(
+    (acceptedFiles) => {
+      if (!onModelsLoad) {
+        console.error("onModelsLoad is not provided!");
         return;
       }
-      if (!file.name.endsWith(".gltf") && !file.name.endsWith(".glb")) {
-        alert("Unsupported file format! Please upload a GLTF/GLB model.");
-        return;
+
+      const validFiles = acceptedFiles.filter(
+        (file) => file.size <= 50 * 1024 * 1024
+      ); // Max 50MB each
+      if (validFiles.length !== acceptedFiles.length) {
+        alert("Some files were too large and were skipped!");
       }
-      setFileName(file.name);
-      onModelLoad(file);
-    }
-  };
+
+      setFiles((prevFiles) => [...prevFiles, ...validFiles]);
+      onModelsLoad((prevModels) => [...prevModels, ...validFiles]);
+    },
+    [onModelsLoad]
+  );
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    accept: { "model/gltf-binary": [".glb"], "model/gltf+json": [".gltf"] },
+    multiple: true, // Allow multiple file selection
+  });
 
   return (
-    <div>
-      <input type="file" accept=".gltf,.glb" onChange={handleFileChange} />
-      {fileName && <p>Loaded: {fileName}</p>}
+    <div
+      {...getRootProps()}
+      className="border-2 border-dashed p-6 text-center cursor-pointer"
+    >
+      <input {...getInputProps()} />
+      {isDragActive ? (
+        <p>Drop your models here...</p>
+      ) : (
+        <p>Drag & drop models, or click to select multiple</p>
+      )}
+
+      {files.length > 0 && (
+        <ul className="mt-2">
+          {files.map((file, index) => (
+            <li key={index} className="text-sm">
+              {file.name}
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

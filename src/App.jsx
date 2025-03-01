@@ -1,19 +1,21 @@
 import { useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
-import "./App.css";
 import React from "react";
 import ModelUploader from "./ModelUploader";
 import Scene from "./Scene";
+import { useDispatch, useSelector } from "react-redux";
+import Overlay from "./Overlay";
+
 
 function App() {
-  const [modelFile, setModelFile] = useState(null);
-
+  const [modelFile, onModelLoad] = useState(null);
   return (
     <>
-      <div className="w-full h-screen ">
-        <ModelUploader onModelLoad={setModelFile} />
-        <Scene modelFile={modelFile} />
+      {" "}
+      <div className="absolute z-30">
+        <Overlay />
+      </div>
+      <div className=" h-screen  ">
+        <Scene />
       </div>
     </>
   );
