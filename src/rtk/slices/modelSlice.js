@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   gltfModel: [],
+  transformControlsMode: 'translate'
 };
 
 export const modelSlice = createSlice({
@@ -11,9 +12,12 @@ export const modelSlice = createSlice({
     setGltfModel: (state, action) => {
       state.gltfModel = action.payload;
     },
+    setTransformControlsMode: (state, action) => {
+      state.transformControlsMode = action.payload;
+    },
   },
 });
 
-export const { setGltfModel } = modelSlice.actions;
+export const { setGltfModel, setTransformControlsMode } = modelSlice.actions;
 
 export default modelSlice.reducer;

@@ -11,7 +11,7 @@ function App() {
   return (
     <>
       {" "}
-      <div className="absolute z-30">
+      <div className=" z-30">
         <Overlay />
       </div>
       <div className=" h-screen  ">
