@@ -1,5 +1,5 @@
 import { Canvas, useThree } from "@react-three/fiber";
-import { Environment, GizmoHelper, GizmoViewport, Grid, OrbitControls, TransformControls } from "@react-three/drei";
+import { Environment, Float, GizmoHelper, GizmoViewport, Grid, OrbitControls, TransformControls } from "@react-three/drei";
 import { useEffect, useRef, useState } from "react";
 import ModelUploader from "./ModelUploader";
 import Model from "./Model";
@@ -10,6 +10,7 @@ import * as THREE from "three";
 import ClickOutsideHandler from "./ClickOutsideHandler";
 import { addModelFile, addModelProp, setScaleY, setSelectedModel } from "./rtk/slices/modelSlice";
 import Overlay from "./Overlay";
+import { Car } from "./Car";
 const Scene = () => {
   const [models, setModels] = useState([]); 
  const orbitRef = useRef();
@@ -31,7 +32,7 @@ const Scene = () => {
 const modelProp  = useSelector((slice) => slice.model.modelProp);
   return (
     <div className="h-screen flex">
-        <Overlay />
+      <Overlay />
       <div className="w-1/4 p-4 bg-gray-100">
         <ModelUploader onModelsLoad={setModels} />
       </div>
@@ -50,7 +51,12 @@ const modelProp  = useSelector((slice) => slice.model.modelProp);
             cellThickness={1}
           />
           <Environment preset="city" />
-
+          <Float>
+            {models.length === 0 && 
+            
+            <Car />
+            }
+          </Float>
           <GizmoHelper alignment="top-right" margin={[80, 80]}>
             <GizmoViewport
               axisColors={["red", "green", "blue"]}
