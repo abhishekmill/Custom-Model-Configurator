@@ -5,7 +5,8 @@ const initialState = {
   modelFile: [],
   modelProp: [],
   transformControlsMode: "translate",
-  selectedModel: null
+  selectedModel: null,
+  selectedModelName: ''
 };
 
 export const modelSlice = createSlice({
@@ -17,6 +18,11 @@ export const modelSlice = createSlice({
     },
     setSelectedModel: (state, action) => {
       state.selectedModel = action.payload;
+    },
+    setSelectedModelName: (state, action) => {
+      state.selectedModelName = action.payload;
+
+      
     },
     setTransformControlsMode: (state, action) => {
       state.transformControlsMode = action.payload;
@@ -109,6 +115,7 @@ export const modelSlice = createSlice({
 });
 
 export const {
+  setSelectedModelName,
   setScaleX,
   setScaleY,
   setScaleZ,

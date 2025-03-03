@@ -6,12 +6,15 @@ const Overlay = () => {
  const { gltfModel } = useSelector((slice) => slice.model);
  const modelProp  = useSelector((slice) => slice.model.modelProp);
  const selectedModel = useSelector((slice) => slice.model.selectedModel);
+ const selectedModelName = useSelector(
+   (slice) => slice.model.selectedModelName
+ );
 const [focous, setFocous ] = useState(null)
 
 
 const dispatch = useDispatch()
  useEffect(() => {
-   console.log(selectedModel);
+   console.log("gltfModel", gltfModel);
  }, [selectedModel, modelProp]);
 
 
@@ -44,12 +47,16 @@ const dispatch = useDispatch()
       {/* position ans props  */}
       {selectedModel !== null ? (
         <>
-          <div className="absolute top-52 left-0   w-1/4   z-50   ">
+          <div className="absolute top-36  left-0   w-1/4   z-50   ">
+            <div className="w-full py-5 text-center  text-lg font-semibold ">
+              selected model: {selectedModelName}
+            </div>
+
             <h1
               onClick={() =>
                 setFocous(`${focous === "Position" ? "null" : "Position"}`)
               }
-              className="px-5 flex w-[100%] justify-between   text-lg font-semibold"
+              className="px-5 flex w-[100%] justify-between   text-md font-semibold"
             >
               Position{" "}
               <img
@@ -111,7 +118,7 @@ const dispatch = useDispatch()
               onClick={() =>
                 setFocous(`${focous === "rotation" ? "null" : "rotation"}`)
               }
-              className="px-5  text-lg flex w-full justify-between font-semibold"
+              className="px-5  text-md flex w-full justify-between font-semibold"
             >
               Rotation
               <img
@@ -173,7 +180,7 @@ const dispatch = useDispatch()
               onClick={() =>
                 setFocous(`${focous === "scale" ? "null" : "scale"}`)
               }
-              className="px-5  flex w-full justify-between text-lg font-semibold"
+              className="px-5  flex w-full justify-between text-md font-semibold"
             >
               Scale{" "}
               <img
@@ -226,6 +233,59 @@ const dispatch = useDispatch()
                 }}
               />
             </div>
+
+            <h1
+              onClick={() =>
+                setFocous(`${focous === "texture" ? "null" : "texture"}`)
+              }
+              className="px-5  flex w-full justify-between text-md font-semibold"
+            >
+              Model Texture
+              <img
+                className={` ${
+                  focous === "texture"
+                    ? "rotate-90 duration-200"
+                    : "rotate-180 duration-200"
+                }`}
+                src="/arrow.png"
+                alt=""
+              />
+            </h1>
+
+            {focous === "texture" && (
+              <div className="  ">
+                {gltfModel &&
+                  gltfModel.map((item, index) => {
+                    console.log(item);
+
+                    return (
+                      <div className="py-2">
+                        <h1 className="px-5  flex w-full justify-between text-md  ml-5 ">
+                          {item.name}
+                        </h1>
+                        <Range
+                          key={index}
+                          manualInput={false}
+                          // value={item.material.metalness}
+                          label={"metalness"}
+                          onChange={(e) => {
+                            item.material.metalness = e.target.value;
+                          }}
+                        />
+                        <Range
+                          key={index}
+                          manualInput={false}
+                          // value={item.material.roughness}
+                          label={"roughness"}
+                          onChange={(e) => {
+                            item.material.roughness = e.target.value;
+                          }}
+                        />
+                      </div>
+                    );
+                  })}
+              </div>
+            )}
           </div>
         </>
       ) : (
@@ -235,41 +295,6 @@ const dispatch = useDispatch()
           </div>
         </>
       )}
-
-      {/*
-       <div className="">
-          {gltfModel &&
-            gltfModel.map((item, index) => {
-              console.log(item);
-
-              return (
-                <>
-                  <div key={index}>
-                    {" "}
-                    {item.name}
-                    <input
-                      type="range"
-                      min={0}
-                      max={2}
-                      step={0.01}
-                      onChange={(e) => {
-                        item.material.metalness = e.target.value;
-                      }}
-                    />
-                    <input
-                      type="range"
-                      min={0}
-                      max={2}
-                      step={0.01}
-                      onChange={(e) => {
-                        item.material.roughness = e.target.value;
-                      }}
-                    />
-                  </div>
-                </>
-              );
-            })}
-        </div> */}
     </>
   );
 }
@@ -295,7 +320,7 @@ const Icon = ({ path,onClick }) => {
 
 
 
-const Range = ({ value, label = "Label", onChange }) => {
+const Range = ({ value, label = "Label", onChange, manualInput= true }) => {
   return (
     <div className=" py-1">
       <div className="flex justify-center items-center gap-2 px-5">
@@ -316,13 +341,13 @@ const Range = ({ value, label = "Label", onChange }) => {
           className="w-52 h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
         />
 
-        <input
+       {manualInput && <input
           type="number"
           value={value}
           onChange={onChange}
           className="appearance-none w-14 h-8 text-center p-2 border border-gray-300 rounded-lg focus:ring-blue-500 focus:border-blue-500
              [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none"
-        />
+        />}
       </div>
     </div>
   );

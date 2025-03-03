@@ -1,6 +1,8 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { useDropzone } from "react-dropzone";
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { setSelectedModelName } from "./rtk/slices/modelSlice";
 
 const ModelUploader = ({ onModelsLoad }) => {
   const [files, setFiles] = useState([]);
@@ -14,7 +16,7 @@ const ModelUploader = ({ onModelsLoad }) => {
 
       const validFiles = acceptedFiles.filter(
         (file) => file.size <= 50 * 1024 * 1024
-      ); // Max 50MB each
+      );
       if (validFiles.length !== acceptedFiles.length) {
         alert("Some files were too large and were skipped!");
       }
@@ -28,8 +30,23 @@ const ModelUploader = ({ onModelsLoad }) => {
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
     onDrop,
     accept: { "model/gltf-binary": [".glb"], "model/gltf+json": [".gltf"] },
-    multiple: true, // Allow multiple file selection
+    multiple: true,
   });
+
+ const selectedModel = useSelector((slice) => slice.model.selectedModel);
+
+
+
+const dispatch = useDispatch()
+
+useEffect(() => {
+  if(files){
+
+    dispatch(setSelectedModelName(files[selectedModel]?.name))
+    
+  }
+
+}, [files, selectedModel]);
 
   return (
     <div
@@ -38,12 +55,12 @@ const ModelUploader = ({ onModelsLoad }) => {
     >
       <input {...getInputProps()} />
       {isDragActive ? (
-        <p>Drop your models here...</p>
+        <p>Drop your models here.....</p>
       ) : (
         <p>Drag & drop models, or click to select multiple</p>
       )}
 
-      {files.length > 0 && (
+      {/* {files.length > 0 && (
         <ul className="mt-2">
           {files.map((file, index) => (
             <li key={index} className="text-sm">
@@ -51,7 +68,7 @@ const ModelUploader = ({ onModelsLoad }) => {
             </li>
           ))}
         </ul>
-      )}
+      )} */}
     </div>
   );
 };

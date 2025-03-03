@@ -27,7 +27,7 @@ const Model = ({ modelFile, isSelected }) => {
       gltf.scene.traverse((child) => {
         if (child.isMesh) {
          
-            child.material.color = new THREE.Color(`${isSelected ? 'blue':'white' }`);
+            child.material.color = new THREE.Color(`${isSelected ? 'blue':'' }`);
 
           meshList.push({
             name: child.name || "Unnamed Mesh",
@@ -41,7 +41,7 @@ const Model = ({ modelFile, isSelected }) => {
       console.log(gltf);
       gltf.materials;
 
-      // dispatch(setGltfModel(updatedModels))
+      dispatch(setGltfModel(meshList));
     }
   }, [gltf, dispatch, isSelected]);
 
