@@ -11,9 +11,6 @@ function App() {
   return (
     <>
       {" "}
-      <div className=" z-30">
-        <Overlay />
-      </div>
       <div className=" h-screen  ">
         <Scene />
       </div>

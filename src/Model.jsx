@@ -26,11 +26,9 @@ const Model = ({ modelFile, isSelected }) => {
 
       gltf.scene.traverse((child) => {
         if (child.isMesh) {
-          if (isSelected) {
-            child.material.color = new THREE.Color("blue");
+         
+            child.material.color = new THREE.Color(`${isSelected ? 'blue':'white' }`);
 
-            console.log("changed color");
-          }
           meshList.push({
             name: child.name || "Unnamed Mesh",
             material: child.material || "No Material",

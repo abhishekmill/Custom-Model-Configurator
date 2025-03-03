@@ -5,50 +5,39 @@ import ModelUploader from "./ModelUploader";
 import Model from "./Model";
 import React from "react";
 import {DoubleSide} from  'three'
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import * as THREE from "three";
+import ClickOutsideHandler from "./ClickOutsideHandler";
+import { addModelFile, addModelProp, setScaleY, setSelectedModel } from "./rtk/slices/modelSlice";
+import Overlay from "./Overlay";
 const Scene = () => {
   const [models, setModels] = useState([]); 
  const orbitRef = useRef();
  const transformRef = useRef();
-     const gl = new THREE.WebGLRenderer();
+     const dispatch =useDispatch()
 
- useEffect(() => {
-   const handleOutsideClick = (e) => {
-     if (setSelectedModel) {
-       setSelectedModel(null);
-     }
-    
-    
-   };
  
-   
-
-   window.addEventListener("click", handleOutsideClick);
-
-   return () => {
-     window.removeEventListener("click", handleOutsideClick);
-   };
- }, [gl]);
  const { transformControlsMode } = useSelector((slice) => slice.model);
-   const [selectedModel, setSelectedModel] = useState(null);
- console.log(models, "models");
+ 
    const handleModelClick = (e, modelIndex) => {
      e.stopPropagation(); 
-     setSelectedModel(modelIndex);
-     console.log(modelIndex);
      
+     dispatch(setSelectedModel(modelIndex));
    };
+
+ const selectedModel = useSelector((slice) => slice.model.selectedModel);
+
+   
+const modelProp  = useSelector((slice) => slice.model.modelProp);
   return (
     <div className="h-screen flex">
-      {/* Upload Panel */}
+        <Overlay />
       <div className="w-1/4 p-4 bg-gray-100">
         <ModelUploader onModelsLoad={setModels} />
       </div>
-
-      {/* 3D Scene */}
       <div className="w-3/4">
         <Canvas camera={{ position: [15, 8, 21] }}>
+          <ClickOutsideHandler />
           <ambientLight intensity={0.5} />
           <pointLight position={[10, 10, 10]} />
           <OrbitControls ref={orbitRef} />
@@ -68,36 +57,74 @@ const Scene = () => {
               labelColor="white"
             />
           </GizmoHelper>
-          {models.map((model, index) => 
-        
-         {
-          
-          const onclick =(e)=>{
-            console.log(e);
+          {models.map((model, index) => {
+            const onclick = (e) => {
+              if (!modelProp[index]) {
+                dispatch(
+                  addModelProp({
+                    position: {
+                      x: 0,
+                      y: 0,
+                      z: 0,
+                    },
+                    scale: {
+                      x: 1,
+                      y: 1,
+                      z: 1,
+                    },
+                    rotation: {
+                      x: 0,
+                      y: 0,
+                      z: 0,
+                    },
+                  })
+                );
+              }
+            };
 
-          }
-          
-          
-          return (
-            <TransformControls
-              mode={transformControlsMode}
-              ref={transformRef}
-              onMouseDown={() => (orbitRef.current.enabled = false)}
-              onMouseUp={() => (orbitRef.current.enabled = true)}
-            >
-              <group name="model" onClick={(e) => handleModelClick(e, index)}>
-                <Model
-                  isSelected={selectedModel === index}
-                  key={index}
-                  modelFile={model}
-                  position={[index * 2, 0, 0]}
-                />
-              </group>
-            </TransformControls>
-          );}
-          
-          
-          )}
+            return (
+              <TransformControls
+                position={[
+                  modelProp[index]?.position?.x ?? 0,
+                  modelProp[index]?.position?.y ?? 0,
+                  modelProp[index]?.position?.z ?? 0,
+                ]}
+                scale={[
+                  modelProp[index]?.scale?.x ?? 1,
+                  modelProp[index]?.scale?.y ?? 1,
+                  modelProp[index]?.scale?.z ?? 1,
+                ]}
+                rotation={[
+                  modelProp[index]?.rotation?.x ?? 0,
+                  modelProp[index]?.rotation?.y ?? 0,
+                  modelProp[index]?.rotation?.z ?? 0,
+                ]}
+                enabled={selectedModel === index}
+                showX={selectedModel === index}
+                showY={selectedModel === index}
+                showZ={selectedModel === index}
+                mode={transformControlsMode}
+                onMouseDown={() => (orbitRef.current.enabled = false)}
+                onMouseUp={() => (orbitRef.current.enabled = true)}
+              >
+                <group
+                  name="model"
+                  onClick={(e) => {
+                    handleModelClick(e, index);
+
+                    onclick();
+                  }}
+                >
+                  <Model
+                    isSelected={selectedModel === index}
+                    key={index}
+                    modelFile={model}
+                    position={[index * 2, 0, 0]}
+                  />
+                </group>
+              </TransformControls>
+            );
+          })}
         </Canvas>
       </div>
     </div>
