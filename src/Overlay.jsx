@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux';
-import { setPositionX, setPositionY, setPositionZ, setRotationX, setRotationY, setRotationZ, setScaleX, setScaleY, setScaleZ, setTransformControlsMode } from './rtk/slices/modelSlice';
+import { setPositionX, setPositionY, setPositionZ, setRotationX, setRotationY, setRotationZ, setScaleX, setScaleY, setScaleZ, setSelectionHiglight, setTransformControlsMode } from './rtk/slices/modelSlice';
 
 const Overlay = () => {
  const { gltfModel } = useSelector((slice) => slice.model);
  const modelProp  = useSelector((slice) => slice.model.modelProp);
  const selectedModel = useSelector((slice) => slice.model.selectedModel);
+ const selectionHiglight = useSelector((slice) => slice.model.selectionHiglight);
  const selectedModelName = useSelector(
    (slice) => slice.model.selectedModelName
  );
@@ -13,9 +14,7 @@ const [focous, setFocous ] = useState(null)
 
 
 const dispatch = useDispatch()
- useEffect(() => {
-   console.log("gltfModel", gltfModel);
- }, [selectedModel, modelProp]);
+
 
 
   return (
@@ -50,6 +49,26 @@ const dispatch = useDispatch()
           <div className="absolute top-36  left-0   w-1/4   z-50   ">
             <div className="w-full py-5 text-center  text-lg font-semibold ">
               selected model: {selectedModelName}
+            </div>
+
+            <div className="w-full flex justify-start ml-5">
+              <div class="flex items-center mb-4">
+                {/* <input
+
+onClick={()=>dispatch(setSelectionHiglight(!selectionHiglight))}
+
+                  id="default-checkbox"
+                  type="checkbox"
+                  value="selectionHiglight"
+                  class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded-sm focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                />
+                <label
+                  for="default-checkbox"
+                  class="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+                >
+                  Default checkbox
+                </label> */}
+              </div>
             </div>
 
             <h1

@@ -8,13 +8,14 @@ import React from "react";
 const Model = ({ modelFile, isSelected }) => {
   const [modelUrl, setModelUrl] = useState(null);
   const dispatch = useDispatch();
+ const selectionHiglight = useSelector((slice) => slice.model.selectionHiglight);
 
   const { gltfModel } = useSelector((slice) => slice.model);
   useEffect(() => {
     if (modelFile) {
       const url = URL.createObjectURL(modelFile);
       setModelUrl(url);
-      return () => URL.revokeObjectURL(url); // Cleanup
+      return () => URL.revokeObjectURL(url); 
     }
   }, [modelFile]);
 
@@ -25,9 +26,12 @@ const Model = ({ modelFile, isSelected }) => {
       const meshList = [];
 
       gltf.scene.traverse((child) => {
-        if (child.isMesh) {
-         
-            child.material.color = new THREE.Color(`${isSelected ? 'blue':'' }`);
+        if (child.isMesh ) {
+
+          if(selectionHiglight){
+
+            child.material.color = new THREE.Color(`${isSelected ? "blue" : ""}`);
+          }
 
           meshList.push({
             name: child.name || "Unnamed Mesh",
@@ -35,11 +39,6 @@ const Model = ({ modelFile, isSelected }) => {
           });
         }
       });
-
-      const updatedModels = [...gltfModel, ...meshList];
-
-      console.log(gltf);
-      gltf.materials;
 
       dispatch(setGltfModel(meshList));
     }

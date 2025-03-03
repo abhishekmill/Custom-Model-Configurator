@@ -6,7 +6,8 @@ const initialState = {
   modelProp: [],
   transformControlsMode: "translate",
   selectedModel: null,
-  selectedModelName: ''
+  selectedModelName: '',
+  selectionHiglight: true,
 };
 
 export const modelSlice = createSlice({
@@ -21,8 +22,9 @@ export const modelSlice = createSlice({
     },
     setSelectedModelName: (state, action) => {
       state.selectedModelName = action.payload;
-
-      
+    },
+    setSelectionHiglight: (state, action) => {
+      state.selectionHiglight = action.payload;
     },
     setTransformControlsMode: (state, action) => {
       state.transformControlsMode = action.payload;
@@ -115,6 +117,7 @@ export const modelSlice = createSlice({
 });
 
 export const {
+  setSelectionHiglight,
   setSelectedModelName,
   setScaleX,
   setScaleY,
