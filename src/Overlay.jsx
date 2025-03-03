@@ -18,7 +18,7 @@ const dispatch = useDispatch()
         <Icon
           path={"/rotation.jpg"}
           onClick={() => {
-            dispatch(setTransformControlsMode("rotation"));
+            dispatch(setTransformControlsMode("rotate"));
           }}
         />
         <Icon

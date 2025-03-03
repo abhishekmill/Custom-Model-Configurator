@@ -1,19 +1,44 @@
 import { Canvas, useThree } from "@react-three/fiber";
 import { Environment, GizmoHelper, GizmoViewport, Grid, OrbitControls, TransformControls } from "@react-three/drei";
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import ModelUploader from "./ModelUploader";
 import Model from "./Model";
 import React from "react";
 import {DoubleSide} from  'three'
 import { useSelector } from "react-redux";
+import * as THREE from "three";
 const Scene = () => {
   const [models, setModels] = useState([]); 
  const orbitRef = useRef();
  const transformRef = useRef();
+     const gl = new THREE.WebGLRenderer();
 
- const { transformControlsMode } = useSelector((slice) => slice.model);
- console.log(models, "models");
+ useEffect(() => {
+   const handleOutsideClick = (e) => {
+     if (setSelectedModel) {
+       setSelectedModel(null);
+     }
+    
+    
+   };
  
+   
+
+   window.addEventListener("click", handleOutsideClick);
+
+   return () => {
+     window.removeEventListener("click", handleOutsideClick);
+   };
+ }, [gl]);
+ const { transformControlsMode } = useSelector((slice) => slice.model);
+   const [selectedModel, setSelectedModel] = useState(null);
+ console.log(models, "models");
+   const handleModelClick = (e, modelIndex) => {
+     e.stopPropagation(); 
+     setSelectedModel(modelIndex);
+     console.log(modelIndex);
+     
+   };
   return (
     <div className="h-screen flex">
       {/* Upload Panel */}
@@ -43,20 +68,36 @@ const Scene = () => {
               labelColor="white"
             />
           </GizmoHelper>
-          {models.map((model, index) => (
+          {models.map((model, index) => 
+        
+         {
+          
+          const onclick =(e)=>{
+            console.log(e);
+
+          }
+          
+          
+          return (
             <TransformControls
               mode={transformControlsMode}
               ref={transformRef}
               onMouseDown={() => (orbitRef.current.enabled = false)}
               onMouseUp={() => (orbitRef.current.enabled = true)}
             >
-              <Model
-                key={index}
-                modelFile={model}
-                position={[index * 2, 0, 0]}
-              />
+              <group name="model" onClick={(e) => handleModelClick(e, index)}>
+                <Model
+                  isSelected={selectedModel === index}
+                  key={index}
+                  modelFile={model}
+                  position={[index * 2, 0, 0]}
+                />
+              </group>
             </TransformControls>
-          ))}
+          );}
+          
+          
+          )}
         </Canvas>
       </div>
     </div>

@@ -3,15 +3,13 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { setGltfModel } from "./rtk/slices/modelSlice";
+import * as THREE from "three";
 import React from "react";
-const Model = ({ modelFile }) => {
+const Model = ({ modelFile, isSelected }) => {
   const [modelUrl, setModelUrl] = useState(null);
   const dispatch = useDispatch();
 
-
-
-
- const { gltfModel } = useSelector((slice) => slice.model);
+  const { gltfModel } = useSelector((slice) => slice.model);
   useEffect(() => {
     if (modelFile) {
       const url = URL.createObjectURL(modelFile);
@@ -20,9 +18,6 @@ const Model = ({ modelFile }) => {
     }
   }, [modelFile]);
 
-
-
-  
   const gltf = modelUrl ? useLoader(GLTFLoader, modelUrl) : null;
 
   useEffect(() => {
@@ -31,18 +26,26 @@ const Model = ({ modelFile }) => {
 
       gltf.scene.traverse((child) => {
         if (child.isMesh) {
+          if (isSelected) {
+            child.material.color = new THREE.Color("blue");
 
+            console.log("changed color");
+          }
           meshList.push({
             name: child.name || "Unnamed Mesh",
             material: child.material || "No Material",
           });
         }
       });
+
       const updatedModels = [...gltfModel, ...meshList];
 
-      dispatch(setGltfModel(updatedModels))
+      console.log(gltf);
+      gltf.materials;
+
+      // dispatch(setGltfModel(updatedModels))
     }
-  }, [gltf, dispatch]);
+  }, [gltf, dispatch, isSelected]);
 
   return gltf ? <primitive object={gltf.scene} /> : null;
 };
