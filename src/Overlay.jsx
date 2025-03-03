@@ -20,7 +20,7 @@ const dispatch = useDispatch()
   return (
     <>
       {/* navbar  */}
-      <div className="w-60 z-[70] bg-slate-400 pb-2  rounded-b-lg top-0 absolute left-[50%] flex justify-evenly ">
+      <div className="w-80 z-[70] bg-slate-400 pb-2  rounded-b-lg top-0 absolute left-[50%] flex justify-evenly ">
         <Icon
           path={"/rotation.jpg"}
           onClick={() => {
@@ -37,6 +37,12 @@ const dispatch = useDispatch()
           path={"/translate.jpeg"}
           onClick={() => {
             dispatch(setTransformControlsMode("translate"));
+          }}
+        />
+        <Icon
+          path={"/github.png"}
+          onClick={() => {
+             window.open("https://github.com/abhishekmill", "_blank");
           }}
         />
       </div>
